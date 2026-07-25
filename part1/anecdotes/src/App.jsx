@@ -2,13 +2,25 @@ import { useState } from "react";
 const Display = (props) => {
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <p>{props.array[props.index]}</p>
       <p>has {props.vote} votes</p>
     </div>
   );
 };
+
 const Button = (props) => {
   return <button onClick={props.onClick}>{props.text}</button>;
+};
+
+const MaxVote = (props) => {
+  return (
+    <div>
+      <h2>Anecdote with most votes</h2>
+      <p>{props.array[props.index]}</p>
+      <p>has {props.vote} votes</p>
+    </div>
+  );
 };
 
 const App = () => {
@@ -37,17 +49,20 @@ const App = () => {
     setVoteArray(copy);
   };
 
+  const handleMax = () => {
+    const max = Math.max(...voteArray);
+    return voteArray.indexOf(max);
+  };
+
   return (
     <div>
       <Display array={anecdotes} index={selected} vote={voteArray[selected]} />
-      <Button
-        onClick={handleVote}
-        text="vote"
-      />
+      <Button onClick={handleVote} text="vote" />
       <Button
         onClick={() => setSelected(selectNumber())}
         text="next anecdote"
       />
+      <MaxVote array={anecdotes} index={handleMax()} vote={voteArray[handleMax()]} />
     </div>
   );
 };
