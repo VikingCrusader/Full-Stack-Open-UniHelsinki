@@ -1,5 +1,6 @@
-import { use } from "react";
 import { useState } from "react";
+import "./App.css";
+
 const Title = () => {
   return <h2>give feedback</h2>;
 };
@@ -14,31 +15,31 @@ const StatTitle = () => {
 
 const StatisticLine = (props) => {
   return (
-    <p>{props.text} {props.value}</p>
-  )
-}
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
+  );
+};
 
-const Statistics = ({good, neutral, bad, all}) => {
-
+const Statistics = ({ good, neutral, bad, all }) => {
   let avg = (good - bad) / all;
   let positive = (good / all) * 100;
   console.log(avg);
 
   if (all > 0) {
     return (
-      <div>
+      <table>
         <StatisticLine text="good" value={good} />
         <StatisticLine text="neutral" value={neutral} />
         <StatisticLine text="bad" value={bad} />
         <StatisticLine text="all" value={all} />
         <StatisticLine text="average" value={avg} />
         <StatisticLine text="positive" value={`${positive} %`} />
-      </div>
+      </table>
     );
   } else {
-    return (
-      <p>No feedback given</p>
-    )
+    return <p>No feedback given</p>;
   }
 };
 
