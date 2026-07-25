@@ -18,16 +18,22 @@ const Statistics = ({good, neutral, bad, all}) => {
   let positive = (good / all) * 100;
   console.log(avg);
 
-  return (
-    <div>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {all}</p>
-      <p>average {avg}</p>
-      <p>positive {positive} %</p>
-    </div>
-  );
+  if (all > 0) {
+    return (
+      <div>
+        <p>good {good}</p>
+        <p>neutral {neutral}</p>
+        <p>bad {bad}</p>
+        <p>all {all}</p>
+        <p>average {avg}</p>
+        <p>positive {positive} %</p>
+      </div>
+    );
+  } else {
+    return (
+      <p>No feedback given</p>
+    )
+  }
 };
 
 const App = () => {
