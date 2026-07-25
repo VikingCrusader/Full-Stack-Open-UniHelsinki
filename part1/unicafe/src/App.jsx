@@ -12,6 +12,12 @@ const StatTitle = () => {
   return <h2>statistics</h2>;
 };
 
+const StatisticLine = (props) => {
+  return (
+    <p>{props.text} {props.value}</p>
+  )
+}
+
 const Statistics = ({good, neutral, bad, all}) => {
 
   let avg = (good - bad) / all;
@@ -21,12 +27,12 @@ const Statistics = ({good, neutral, bad, all}) => {
   if (all > 0) {
     return (
       <div>
-        <p>good {good}</p>
-        <p>neutral {neutral}</p>
-        <p>bad {bad}</p>
-        <p>all {all}</p>
-        <p>average {avg}</p>
-        <p>positive {positive} %</p>
+        <StatisticLine text="good" value={good} />
+        <StatisticLine text="neutral" value={neutral} />
+        <StatisticLine text="bad" value={bad} />
+        <StatisticLine text="all" value={all} />
+        <StatisticLine text="average" value={avg} />
+        <StatisticLine text="positive" value={`${positive} %`} />
       </div>
     );
   } else {
