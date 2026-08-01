@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Note from "./components/Note";
 
 const App = (props) => {
-  const [notes, setNotes] = useState(props.notes); //这个useState控制了notes的状态，初始值为props.notes
+  const [notes, setNotes] = useState([]); //这个useState控制了notes的状态，初始值为props.notes
   const [newNote, setNewNote] = useState('a new note...'); //这个useState控制了newNote的状态，初始值为'a new note...'
   const [showAll, setShowAll] = useState(true);
   const addNote = (event) => {
@@ -25,6 +26,17 @@ const App = (props) => {
   const notesToShow = showAll //在这里我们用了一个三元运算符来判断是否显示所有的笔记，如果showAll为true，则显示所有的笔记，否则只显示重要的笔记
     ? notes //如果showAll为true，则notesToShow就是notes数组本身
     : notes.filter(note => note.important === true) //如果showAll为false，则notesToShow是一个新的数组，里面只包含important为true的笔记
+
+  useEffect(() => { //这个useEffect会在组件挂载时执行一次，发送一个GET请求获取所有的笔记
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/notes') //使用axios发送一个GET请求，获取所有的笔记
+      .then(response => {
+        console.log('promise fulfilled')
+        setNotes(response.data) //将获取到的笔记数据更新到notes的状态中,并且触发组件的重新渲染
+      })
+  }, []) //这个空数组表示这个effect只会在组件挂载时执行一次
+  console.log('render', notes.length, 'notes')
 
   return (
     <div>
