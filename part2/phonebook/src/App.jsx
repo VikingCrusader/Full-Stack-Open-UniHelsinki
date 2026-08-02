@@ -4,12 +4,14 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import server from "./services/server";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState(null);
 
   //Read
   useEffect(() => {
@@ -27,7 +29,7 @@ const App = () => {
   const addName = (event) => {
     //client side validation
     event.preventDefault();
-    const existingPerson = persons.find((person) => person.name === newName);
+    const existingPerson = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
     if (existingPerson) {
       if (!window.confirm(`${newName} is already added to phonebook. Replace the old number with a new one?`)) {
         return;
@@ -41,10 +43,18 @@ const App = () => {
               person.id !== existingPerson.id ? person : returnedPerson
             )
           );
+          setNotification({ message: `Updated ${returnedPerson.name}`, type: "success" });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
           setNewName("");
           setNewNumber("");
         })
         .catch((error) => {
+          setNotification({ message: "Error updating person:", type: "error" });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
           console.error("Error updating person:", error);
         });
     } else {
@@ -58,9 +68,16 @@ const App = () => {
           setPersons(persons.concat(createdPerson));
           setNewName("");
           setNewNumber("");
+          setNotification({ message: `Added ${createdPerson.name}`, type: "success" });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
         })
         .catch((error) => {
-          console.error("Error creating person:", error);
+          setNotification({ message: "Error creating person:", type: "error" });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
         });
     }
   };
@@ -74,8 +91,16 @@ const App = () => {
           .del(id)
           .then(() => {
             setPersons(persons.filter((person) => person.id !== id));
+            setNotification({ message: `Deleted ${personToDelete.name}`, type: "success" });
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
           })
           .catch((error) => {
+            setNotification({ message: "Error deleting person:", type: "error" });
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
             console.error("Error deleting person:", error);
           });
       }
@@ -103,6 +128,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notification?.message} type={notification?.type} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <PersonForm
         addName={addName}

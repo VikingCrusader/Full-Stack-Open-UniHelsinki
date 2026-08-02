@@ -19,6 +19,26 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
+    },
+    {
+      "name": "Zhang San",
+      "number": "123456",
+      "id": "T1FYLDFo8qs"
+    },
+    {
+      "name": "Lisi",
+      "number": "888888888",
+      "id": "-c-3gjRgrl0"
+    },
+    {
+      "name": "Lucy",
+      "number": "234889977",
+      "id": "S2uolNlE1ko"
+    },
+    {
+      "name": "Christina",
+      "number": "000999772",
+      "id": "6FRQ6pLTNUA"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
