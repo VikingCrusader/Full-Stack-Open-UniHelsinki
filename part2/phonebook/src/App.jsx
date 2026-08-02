@@ -49,38 +49,6 @@ const App = () => {
     }
   };
 
-  //Update Number
-  const updateNumber = (id, newNumber) => {
-    const personToUpdate = persons.find(person => person.id === id);
-    if (personToUpdate) {
-      const updatedPerson = { ...personToUpdate, number: newNumber };
-      server
-        .update(id, updatedPerson)
-        .then((returnedPerson) => {
-          setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
-        })
-        .catch((error) => {
-          console.error("Error updating person:", error);
-        });
-    }
-  }
-
-  //Update Name
-  const updateName = (id, newName) => {
-    const personToUpdate = persons.find(person => person.id === id);
-    if (personToUpdate) {
-      const updatedPerson = { ...personToUpdate, name: newName };
-      server
-        .update(id, updatedPerson)
-        .then((returnedPerson) => {
-          setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
-        })
-        .catch((error) => {
-          console.error("Error updating person:", error);
-        });
-    }
-  }
-
   //Delete
   const deletePerson = (id) => {
     const personToDelete = persons.find(person => person.id === id);
@@ -128,7 +96,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} updateNumber={updateNumber} updateName={updateName} />
+      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} />
     </div>
   );
 };
