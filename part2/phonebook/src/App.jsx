@@ -51,7 +51,7 @@ const App = () => {
           setNewNumber("");
         })
         .catch((error) => {
-          setNotification({ message: "Error updating person:", type: "error" });
+          setNotification({ message: "The person of" + newName + " has already been removed from the server", type: "error" });
           setTimeout(() => {
             setNotification(null);
           }, 5000);
@@ -97,7 +97,7 @@ const App = () => {
             }, 5000);
           })
           .catch((error) => {
-            setNotification({ message: "Error deleting person:", type: "error" });
+            setNotification({ message: "The person of" + personToDelete.name + " has already been removed from the server", type: "error" });
             setTimeout(() => {
               setNotification(null);
             }, 5000);
