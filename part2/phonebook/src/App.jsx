@@ -23,19 +23,35 @@ const App = () => {
       });
   }, []);
 
-  //Create
+  //Create and Update
   const addName = (event) => {
     //client side validation
     event.preventDefault();
-    console.log("clicked");
-    const newPerson = {
-      name: newName,
-      id: persons.length + 1,
-      number: newNumber
-    };
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+    const existingPerson = persons.find((person) => person.name === newName);
+    if (existingPerson) {
+      if (!window.confirm(`${newName} is already added to phonebook. Replace the old number with a new one?`)) {
+        return;
+      }
+      const updatedPerson = { ...existingPerson, number: newNumber };
+      server
+        .update(existingPerson.id, updatedPerson)
+        .then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id !== existingPerson.id ? person : returnedPerson
+            )
+          );
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          console.error("Error updating person:", error);
+        });
     } else {
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+      };
       server
         .create(newPerson)
         .then((createdPerson) => {
