@@ -3,6 +3,7 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import server from "./services/server";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,15 +11,21 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
 
+  //Read
   useEffect(() => {
-    console.log("effect");
-    axios.get("http://localhost:3000/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
-    });
+    server
+      .getAll()
+      .then((initialPersons) => {
+        setPersons(initialPersons);
+      })
+      .catch((error) => {
+        console.error("Error fetching persons:", error);
+      });
   }, []);
 
+  //Create
   const addName = (event) => {
+    //client side validation
     event.preventDefault();
     console.log("clicked");
     const newPerson = {
@@ -29,9 +36,65 @@ const App = () => {
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(persons.concat(newPerson));
-      setNewName("");
-      setNewNumber("");
+      server
+        .create(newPerson)
+        .then((createdPerson) => {
+          setPersons(persons.concat(createdPerson));
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          console.error("Error creating person:", error);
+        });
+    }
+  };
+
+  //Update Number
+  const updateNumber = (id, newNumber) => {
+    const personToUpdate = persons.find(person => person.id === id);
+    if (personToUpdate) {
+      const updatedPerson = { ...personToUpdate, number: newNumber };
+      server
+        .update(id, updatedPerson)
+        .then((returnedPerson) => {
+          setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
+        })
+        .catch((error) => {
+          console.error("Error updating person:", error);
+        });
+    }
+  }
+
+  //Update Name
+  const updateName = (id, newName) => {
+    const personToUpdate = persons.find(person => person.id === id);
+    if (personToUpdate) {
+      const updatedPerson = { ...personToUpdate, name: newName };
+      server
+        .update(id, updatedPerson)
+        .then((returnedPerson) => {
+          setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
+        })
+        .catch((error) => {
+          console.error("Error updating person:", error);
+        });
+    }
+  }
+
+  //Delete
+  const deletePerson = (id) => {
+    const personToDelete = persons.find(person => person.id === id);
+    if (personToDelete) {
+      if (window.confirm(`Are you sure you want to delete ${personToDelete.name}?`)) {
+        server
+          .del(id)
+          .then(() => {
+            setPersons(persons.filter((person) => person.id !== id));
+          })
+          .catch((error) => {
+            console.error("Error deleting person:", error);
+          });
+      }
     }
   };
 
@@ -65,7 +128,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} updateNumber={updateNumber} updateName={updateName} />
     </div>
   );
 };
