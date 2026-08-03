@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useEffect } from "react";
+import ShowWeather from "./ShowWeather.jsx";
 
 const Display = ({ countries }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
-
+    
   useEffect(() => {
     // Reset selected country if the countries prop changes
     setSelectedCountry(null);
   }, [countries]);
-    
+
   const handleShowCountry = (countryName) => {
     const country = countries.find((c) => c.name.common === countryName);
     setSelectedCountry(country);
@@ -37,6 +38,7 @@ const Display = ({ countries }) => {
           alt={`Flag of ${country.name.common}`}
           width="200"
         />
+        <ShowWeather capital={country.capital} />
       </div>
     );
   } else if (selectedCountry !== null) {
@@ -56,6 +58,7 @@ const Display = ({ countries }) => {
           alt={`Flag of ${selectedCountry.name.common}`}
           width="200"
         />
+        <ShowWeather capital={selectedCountry.capital} />
       </div>
     );
   } else {
