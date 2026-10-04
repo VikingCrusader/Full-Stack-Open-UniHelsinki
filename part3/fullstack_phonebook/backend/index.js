@@ -4,6 +4,7 @@ const app = express();
 
 
 app.use(express.json())
+app.use(express.static('dist'))
 
 morgan.token('body', (request) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -33,10 +34,6 @@ let persons =
       "number": "39-23-6423122"
     }
     ]
-
-app.get('/', (request, response) => {
-  response.send('Express Server of Phonebook')
-})
 
 app.get('/api/persons', (request, response) => {
     response.json(persons)
