@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 3001;
 
-let notes = 
+let persons = 
 [
     { 
       "id": "1",
@@ -31,15 +31,38 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(notes)
+    response.json(persons)
 })
 
 app.get('/info', (request, response) => {
     response.send(`
-        <p>Phonebook has info for ${notes.length} people</p>
+        <p>Phonebook has info for ${persons.length} people</p>
         <p>${new Date()}</p>
     `)
 })
+//get
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id;
+    const person = persons.find(person => person.id === id)
+    if (person) {
+        response.json(person)
+    } else {
+        response.status(404).end()
+    }
+})
+
+//Generate ID
+const generateId = () => {
+    const maxID = persons.length > 0
+        ? Math.max(...persons.map(n=>Number(n, id)))
+        : 0
+    return String(maxId + 1)
+}
+//Post
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+})
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
