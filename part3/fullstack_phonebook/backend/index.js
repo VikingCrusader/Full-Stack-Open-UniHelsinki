@@ -1,97 +1,64 @@
+require('dotenv').config()
 const express = require('express');
+const Contact = require('./models/contact')
 const morgan = require('morgan')
 const app = express();
-
-
 app.use(express.json())
 app.use(express.static('dist'))
 
 morgan.token('body', (request) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+const PORT = process.env.PORT || 3001
 
-const PORT = process.env.PORT || 3001;
-
-let persons = 
-[
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-    ]
-
+//get all persons
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+  Contact.find({}).then(contacts => {
+    response.json(contacts)
+  })
 })
 
+//get info
 app.get('/info', (request, response) => {
-    response.send(`
-        <p>Phonebook has info for ${persons.length} people</p>
-        <p>${new Date()}</p>
-    `)
+    Contact.find({}).then(contacts => {
+        response.send(`<p>Phonebook has info for ${contacts.length} people</p>
+        <p>${new Date()}</p>`)
+    })
 })
-//get
+
+//get a specific person
 app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id;
-    const person = persons.find(person => person.id === id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    Contact.findById(request.params.id).then(
+        result => {
+            if (result != null) {
+                response.json(result)
+            } else {
+                return response.status(404).end()
+        }
+    })
 })
 
-//delete
-app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id;
-    persons = persons.filter(person => person.id != id)
-    response.status(204).end()
-})
-
-//Generate ID
-const generateId = () => {
-    return String(Math.floor(Math.random() * 1000000))
-}
-//Post
+//post a new person
 app.post('/api/persons', (request, response) => {
     const body = request.body
-
     if (!body.name || !body.number) {
-        return response.status(400).json({
-            error: 'name or number missing'
-        })
+        console.log("Name and Number have to be filled")
+        return response.status(400).json({ error: 'content missing' })
     }
 
-    if (persons.find (person => person.name === body.name)){
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
-
-    const person = {
-        id: generateId(),
+    const contact = new Contact({
         name: body.name,
         number: body.number
-    }
+    })
 
-    persons = persons.concat(person)
-    response.status(201).json(person)
+    contact.save().then(
+        savedPerson => {
+            response.json(savedPerson)
+        }
+    )
 })
+
+//update
+//delete
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
